@@ -1,0 +1,17 @@
+name = "game-matchup-backend"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Replace with your actual Hyperdrive ID from the Cloudflare Dashboard
+[[hyperdrive]]
+binding = "HYPERDRIVE"
+id = "d67ae32caa39461e8e4567d4b582004c"
+
+# If you are NOT using Hyperdrive and connecting directly via a Cloudflare Tunnel
+# to your MySQL server, you would define environment variables instead:
+# [vars]
+# DB_HOST = "your-tunnel-endpoint.com"
+# DB_USER = "root"
+# DB_PASS = "your_password"
+# DB_NAME = "your_database_name"
