@@ -1,0 +1,14 @@
+{
+  "name": "phase1-db",
+  "version": "1.0.0",
+  "description": "Database migration script for Game Matchup App",
+  "main": "migrate.js",
+  "type": "module",
+  "scripts": {
+    "start": "node migrate.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.9.2",
+    "dotenv": "^16.4.5"
+  }
+}
