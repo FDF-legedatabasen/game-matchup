@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Voting from './components/Voting';
 import Leaderboard from './components/Leaderboard';
 
@@ -35,19 +35,17 @@ function App() {
   return (
     <HashRouter>
       <div className="app-container">
-        <nav>
-          <h1>Would You Rather: Games Edition</h1>
-          <div className="nav-links">
-            <Link to="/">Vote</Link>
-            <Link to="/leaderboard">Leaderboard</Link>
-          </div>
-        </nav>
-        <main>
-          <Routes>
-            <Route path="/" element={<Voting games={games} setGames={setGames} />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-          </Routes>
-        </main>
+        <Routes>
+          <Route path="/" element={
+            <>
+              <header className="app-header">
+                <h1>Hvilken leg vil du helst lege?</h1>
+              </header>
+              <Voting games={games} setGames={setGames} />
+            </>
+          } />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+        </Routes>
       </div>
     </HashRouter>
   );

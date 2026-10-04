@@ -1,151 +1,360 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+/* ── Knockout Fonts ──────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Knockout';
+  src: url('../../fonts/Knockout-31.woff2') format('woff2');
+  font-weight: 100; /* maps to Knockout-31 */
+}
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@font-face {
+  font-family: 'Knockout';
+  src: url('../../fonts/Knockout-51.woff2') format('woff2');
+  font-weight: 300; /* maps to Knockout-51 */
+}
+
+@font-face {
+  font-family: 'Knockout';
+  src: url('../../fonts/Knockout-71.woff2') format('woff2');
+  font-weight: 500; /* maps to Knockout-71 */
+}
+
+@font-face {
+  font-family: 'Knockout';
+  src: url('../../fonts/Knockout-94.woff2') format('woff2');
+  font-weight: 900; /* maps to Knockout-94 */
+}
+
+/* ── Reset & Base ────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: 'Knockout', system-ui, sans-serif;
+  color: #fff;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  min-height: 100dvh;
+  background: #111;
+  overflow: hidden; /* prevent scrollbars on the split screen */
+}
+
+/* On mobile allow scroll since panels stack */
+@media (max-width: 768px) {
+  body {
+    overflow: auto;
+  }
 }
 
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
   width: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* ── App Shell ───────────────────────────────────────────────────── */
 .app-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-}
-
-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-}
-
-nav h1 {
-  margin: 0;
-}
-
-.nav-links {
-  display: flex;
-  gap: 1rem;
-}
-
-.nav-links a {
-  color: #646cff;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.nav-links a:hover {
-  color: #535bf2;
-}
-
-/* Matchup / Voting */
-.matchup-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.cards-wrapper {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.game-card {
-  width: 300px;
-  padding: 1.5rem;
-  border-radius: 12px;
-  background: #333;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.game-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-.game-card img {
   width: 100%;
-  aspect-ratio: 4/3;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  height: 100dvh;
 }
 
-.game-card h3 {
-  margin: 0 0 0.5rem 0;
+/* ── Top Header ──────────────────────────────────────────────────── */
+.app-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  pointer-events: none; /* let clicks fall through to the panels */
 }
 
-.game-card p {
-  font-size: 0.9rem;
-  color: #aaa;
+.app-header h1 {
+  font-family: 'Knockout', sans-serif;
+  font-weight: 900; /* Knockout-94 */
+  font-size: clamp(2rem, 5vw, 4rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
   margin: 0;
+  padding: 1rem 2rem;
+  text-align: center;
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Voting Split Layout ─────────────────────────────────────────── */
+.matchup-container {
+  position: relative; /* anchor the OR badge */
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100dvh;
+  gap: 10px;
+  background: #111; /* color that shows in the gap */
+}
+
+.game-panel {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+
+  /* background image will be set inline via style prop */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Only the corners facing the center gap are rounded */
+  border-radius: 0 14px 14px 0; /* left panel */
+
+  transition: flex 0.3s ease;
+}
+
+.game-panel:last-child {
+  border-radius: 14px 0 0 14px; /* right panel */
+}
+
+/* Gradient only darkens near the bottom where the text lives */
+.game-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.55) 25%,
+    rgba(0, 0, 0, 0.1) 45%,
+    rgba(0, 0, 0, 0) 60%
+  );
+  transition: background 0.25s ease;
+  z-index: 1;
+}
+
+.game-panel:hover {
+  flex: 1.12;
+}
+
+/* Remove old border divider (gap handles separation now) */
+
+/* Content sits above the overlay — fixed width prevents text reflow on hover */
+.panel-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem 2.5rem;
+  text-align: center;
+  width: min(85%, 440px);
+}
+
+.panel-name {
+  font-family: 'Knockout', sans-serif;
+  font-weight: 500; /* Knockout-71 */
+  font-size: clamp(2rem, 4vw, 4.5rem);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem 0;
+  line-height: 1;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+}
+
+.panel-teaser {
+  font-family: 'Knockout', sans-serif;
+  font-weight: 100; /* Knockout-31 */
+  font-size: clamp(0.9rem, 1.8vw, 1.4rem);
+  letter-spacing: 0.02em;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+
+  /* Clamp to 3 lines */
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
+/* Vote counter at the very bottom, centered, above both panels */
 .vote-counter {
-  font-size: 0.8rem;
-  color: #888;
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  pointer-events: none;
 }
 
-/* Leaderboard */
+/* ── OR Badge in the center ──────────────────────────────────────── */
+/* Anchored inside .matchup-container (which is position:relative)   */
+/* On desktop: sits at the center of the vertical divider gap        */
+/* On mobile: sits at the boundary between the two stacked panels    */
+.or-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 25;
+  background: #fff;
+  color: #111;
+  font-family: 'Knockout', sans-serif;
+  font-weight: 900;
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Mobile: Stack vertically ────────────────────────────────────── */
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto;
+  }
+
+  #root {
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .app-container {
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .app-header {
+    position: relative;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 0;
+  }
+
+  .app-header h1 {
+    font-size: clamp(1.6rem, 8vw, 2.5rem);
+    padding: 0.75rem 1rem;
+  }
+
+  .matchup-container {
+    flex-direction: column;
+    height: auto;
+    gap: 8px;
+  }
+
+  .game-panel {
+    height: 50dvh;
+    flex: none;
+    /* Top panel: bottom corners face the gap */
+    border-radius: 0 0 14px 14px;
+  }
+
+  /* Bottom panel: top corners face the gap */
+  .game-panel:last-child {
+    border-radius: 14px 14px 0 0;
+  }
+
+  .game-panel:hover {
+    flex: none;
+  }
+
+  .panel-content {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .panel-name {
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
+  }
+
+  .panel-teaser {
+    font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+  }
+}
+
+/* ── Loading ─────────────────────────────────────────────────────── */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100dvh;
+  font-family: 'Knockout', sans-serif;
+  font-weight: 100;
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ── Leaderboard ─────────────────────────────────────────────────── */
+.leaderboard-wrapper {
+  min-height: 100dvh;
+  padding: 4rem 2rem 2rem;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.leaderboard-wrapper h2 {
+  font-family: 'Knockout', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
 .leaderboard-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 640px;
 }
 
 .leaderboard-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .leaderboard-item {
   display: flex;
   align-items: center;
-  background: #333;
-  padding: 1rem;
+  background: #222;
+  padding: 0.85rem 1rem;
   border-radius: 8px;
   gap: 1rem;
+  border: 1px solid rgba(255,255,255,0.07);
 }
 
 .rank {
+  font-family: 'Knockout', sans-serif;
+  font-weight: 900;
   font-size: 1.5rem;
-  font-weight: bold;
-  color: #888;
-  width: 40px;
+  color: rgba(255,255,255,0.4);
+  width: 2.5rem;
+  text-align: center;
 }
 
 .leaderboard-img {
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   object-fit: cover;
   border-radius: 6px;
 }
@@ -155,16 +364,24 @@ nav h1 {
   flex-direction: column;
   align-items: flex-start;
   flex: 1;
+  gap: 0.2rem;
 }
 
 .details h3 {
   margin: 0;
-  font-size: 1.1rem;
+  font-family: 'Knockout', sans-serif;
+  font-weight: 500;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .stats {
   display: flex;
   gap: 1rem;
-  font-size: 0.85rem;
-  color: #aaa;
+  font-family: 'Knockout', sans-serif;
+  font-weight: 100;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.04em;
 }

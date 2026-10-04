@@ -21,22 +21,24 @@ export default function Leaderboard() {
   if (loading) return <div>Loading leaderboard...</div>;
 
   return (
-    <div className="leaderboard-container">
-      <h2>Top Games</h2>
-      <div className="leaderboard-list">
-        {leaders.map((game, index) => (
-          <div key={game.id} className="leaderboard-item">
-            <div className="rank">#{index + 1}</div>
-            <img src={game.image_path} alt={game.name} className="leaderboard-img" />
-            <div className="details">
-              <h3>{game.name}</h3>
-              <div className="stats">
-                <span>Elo: {game.elo_rating}</span>
-                <span>Matches: {game.matches_played}</span>
+    <div className="leaderboard-wrapper">
+      <div className="leaderboard-container">
+        <h2>Top Games</h2>
+        <div className="leaderboard-list">
+          {leaders.map((game, index) => (
+            <div key={game.id} className="leaderboard-item">
+              <div className="rank">#{index + 1}</div>
+              <img src={game.image_path} alt={game.name} className="leaderboard-img" />
+              <div className="details">
+                <h3>{game.name}</h3>
+                <div className="stats">
+                  <span>Elo: {game.elo_rating}</span>
+                  <span>Matches: {game.matches_played}</span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

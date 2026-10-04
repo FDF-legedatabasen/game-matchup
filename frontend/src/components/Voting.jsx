@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { API_URL } from '../App';
 
@@ -26,8 +26,6 @@ export default function Voting({ games, setGames }) {
       const response = await fetch(`${API_URL}/api/games`);
       if (response.ok) {
         const freshGames = await response.json();
-        // We do a naive replace here. For a truly seamless experience,
-        // you'd merge so that the *current* matchup's Elo isn't jarringly changed.
         setGames(freshGames);
       }
     } catch (error) {
@@ -40,18 +38,17 @@ export default function Voting({ games, setGames }) {
 
     let game1, game2;
     let attempts = 0;
-    const maxAttempts = 50; // Prevent infinite loop
+    const maxAttempts = 50;
 
     while (attempts < maxAttempts) {
       game1 = currentGames[Math.floor(Math.random() * currentGames.length)];
-      
+
       // Define bracket (+/- 150 Elo)
-      let bracket = currentGames.filter(g => 
-        g.id !== game1.id && 
+      let bracket = currentGames.filter(g =>
+        g.id !== game1.id &&
         Math.abs(g.elo_rating - game1.elo_rating) <= 150
       );
 
-      // If bracket is empty, expand it by taking any other game
       if (bracket.length === 0) {
         bracket = currentGames.filter(g => g.id !== game1.id);
       }
@@ -67,7 +64,7 @@ export default function Voting({ games, setGames }) {
       attempts++;
     }
 
-    // Fallback if we couldn't find a new matchup (extremely rare or small dataset)
+    // Fallback
     const randomG1 = currentGames[Math.floor(Math.random() * currentGames.length)];
     const others = currentGames.filter(g => g.id !== randomG1.id);
     const randomG2 = others[Math.floor(Math.random() * others.length)];
@@ -79,7 +76,7 @@ export default function Voting({ games, setGames }) {
     const rect = event.currentTarget.getBoundingClientRect();
     const x = (rect.left + rect.width / 2) / window.innerWidth;
     const y = (rect.top + rect.height / 2) / window.innerHeight;
-    confetti({ origin: { x, y }, particleCount: 50, spread: 60 });
+    confetti({ origin: { x, y }, particleCount: 60, spread: 70 });
 
     // 2. History Update
     const matchupKey = `${Math.min(winnerId, loserId)}-${Math.max(winnerId, loserId)}`;
@@ -106,30 +103,37 @@ export default function Voting({ games, setGames }) {
     }).catch(err => console.error('Vote submission failed:', err));
   };
 
-  if (currentMatchup.length !== 2) return <div>Loading matchup...</div>;
+  if (currentMatchup.length !== 2) {
+    return <div className="loading">Loading matchup...</div>;
+  }
 
   return (
-    <div className="matchup-container">
-      <h2>Which game do you prefer?</h2>
-      <div className="cards-wrapper">
+    <>
+      <div className="matchup-container">
         {currentMatchup.map(game => {
           const otherGame = currentMatchup.find(g => g.id !== game.id);
           return (
-            <div 
-              key={game.id} 
-              className="game-card" 
+            <div
+              key={game.id}
+              className="game-panel"
+              style={{ backgroundImage: `url(${game.image_path})` }}
               onClick={(e) => handleVote(game.id, otherGame.id, e)}
             >
-              <img src={game.image_path} alt={game.name} />
-              <h3>{game.name}</h3>
-              <p>{game.teaser}</p>
+              <div className="panel-content">
+                <h2 className="panel-name">{game.name}</h2>
+                <p className="panel-teaser">{game.teaser}</p>
+              </div>
             </div>
           );
         })}
+
+        {/* OR badge sits inside the relative container so it tracks the divider */}
+        <div className="or-badge">OR</div>
       </div>
+
       <div className="vote-counter">
-        Votes cast this session: {votesCast}
+        {votesCast} {votesCast === 1 ? 'vote' : 'votes'} this session
       </div>
-    </div>
+    </>
   );
 }
