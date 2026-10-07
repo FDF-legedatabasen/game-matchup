@@ -23,7 +23,8 @@ export default function Leaderboard() {
   return (
     <div className="leaderboard-wrapper">
       <div className="leaderboard-container">
-        <h2>Top Games</h2>
+        <img src="https://legedatabasen.dk/graphics/LDB-logo.svg" alt="Legedatabasen" className="ldb-img" />
+        <h2>Top Lege!</h2>
         <div className="leaderboard-list">
           {leaders.map((game, index) => (
             <div key={game.id} className="leaderboard-item">
@@ -32,12 +33,13 @@ export default function Leaderboard() {
               <div className="details">
                 <h3>{game.name}</h3>
                 <div className="stats">
-                  <span>Elo: {game.elo_rating}</span>
+                  <span>Point: {game.elo_rating}</span>
                   <span>Matches: {game.matches_played}</span>
                 </div>
               </div>
             </div>
           ))}
+          <p>...ja, og det var så det...</p>
         </div>
       </div>
     </div>

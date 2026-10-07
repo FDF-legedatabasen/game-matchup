@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { API_URL } from '../App';
 
@@ -6,6 +6,7 @@ export default function Voting({ games, setGames }) {
   const [currentMatchup, setCurrentMatchup] = useState([]);
   const [seenMatchups, setSeenMatchups] = useState(new Set());
   const [votesCast, setVotesCast] = useState(0);
+  const sessionVoteCount = useRef(0);
 
   // Initialize first matchup when games load
   useEffect(() => {
@@ -82,7 +83,9 @@ export default function Voting({ games, setGames }) {
     const matchupKey = `${Math.min(winnerId, loserId)}-${Math.max(winnerId, loserId)}`;
     const newSeen = new Set(seenMatchups).add(matchupKey);
     setSeenMatchups(newSeen);
-    setVotesCast(prev => prev + 1);
+    sessionVoteCount.current += 1;
+    console.log(`Votes this session: ${sessionVoteCount.current}`);
+    setVotesCast(sessionVoteCount.current);
 
     // 3. Local Elo Update (Optimistic)
     const updatedGames = games.map(g => {
@@ -128,11 +131,7 @@ export default function Voting({ games, setGames }) {
         })}
 
         {/* OR badge sits inside the relative container so it tracks the divider */}
-        <div className="or-badge">OR</div>
-      </div>
-
-      <div className="vote-counter">
-        {votesCast} {votesCast === 1 ? 'vote' : 'votes'} this session
+        {/*<div className="or-badge">OR</div>*/}
       </div>
     </>
   );

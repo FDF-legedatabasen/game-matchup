@@ -38,10 +38,10 @@ function App() {
         <Routes>
           <Route path="/" element={
             <>
+              <Voting games={games} setGames={setGames} />
               <header className="app-header">
                 <h1>Hvilken leg vil du helst lege?</h1>
               </header>
-              <Voting games={games} setGames={setGames} />
             </>
           } />
           <Route path="/leaderboard" element={<Leaderboard />} />

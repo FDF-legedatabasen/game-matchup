@@ -30,15 +30,14 @@
 
 :root {
   font-family: 'Knockout', system-ui, sans-serif;
-  color: #fff;
+  color: rgb(33, 37, 41);
 }
 
 body {
   margin: 0;
   padding: 0;
   min-height: 100dvh;
-  background: #111;
-  overflow: hidden; /* prevent scrollbars on the split screen */
+  background-color: rgb(248, 250, 252);
 }
 
 /* On mobile allow scroll since panels stack */
@@ -66,29 +65,32 @@ body {
 /* ── Top Header ──────────────────────────────────────────────────── */
 .app-header {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 1rem;
+  left: 50%;
+  right: auto;
+  width: max-content;
+  max-width: 90%;
+  transform: translateX(-50%);
   z-index: 20;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   pointer-events: none; /* let clicks fall through to the panels */
+  border-radius: 999px;
+  background: rgb(248, 250, 252);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .app-header h1 {
+  /*white-space: nowrap;*/
   font-family: 'Knockout', sans-serif;
   font-weight: 900; /* Knockout-94 */
-  font-size: clamp(2rem, 5vw, 4rem);
+  font-size: clamp(1rem, 3vw, 2rem);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #fff;
   margin: 0;
-  padding: 1rem 2rem;
+  padding: 0.6rem 2rem;
   text-align: center;
-  text-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.8),
-    0 0 40px rgba(0, 0, 0, 0.6);
 }
 
 /* ── Voting Split Layout ─────────────────────────────────────────── */
@@ -98,8 +100,7 @@ body {
   flex-direction: row;
   width: 100%;
   height: 100dvh;
-  gap: 10px;
-  background: #111; /* color that shows in the gap */
+  gap: 1rem;
 }
 
 .game-panel {
@@ -118,13 +119,13 @@ body {
   background-repeat: no-repeat;
 
   /* Only the corners facing the center gap are rounded */
-  border-radius: 0 14px 14px 0; /* left panel */
+  border-radius: 0 2rem 2rem 0; /* left panel */
 
   transition: flex 0.3s ease;
 }
 
 .game-panel:last-child {
-  border-radius: 14px 0 0 14px; /* right panel */
+  border-radius: 2rem 0 0 2rem; /* right panel */
 }
 
 /* Gradient only darkens near the bottom where the text lives */
@@ -134,20 +135,29 @@ body {
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.82) 0%,
-    rgba(0, 0, 0, 0.55) 25%,
-    rgba(0, 0, 0, 0.1) 45%,
-    rgba(0, 0, 0, 0) 60%
+    rgba(210, 40, 50, 0.82) 0%,
+    rgba(210, 40, 50, 0.55) 25%,
+    rgba(210, 40, 50, 0.1) 45%,
+    rgba(210, 40, 50, 0) 60%
   );
   transition: background 0.25s ease;
   z-index: 1;
+}
+
+.game-panel:last-child::before {
+  background: linear-gradient(
+    to top,
+    rgba(70, 120, 200, 0.82) 0%,
+    rgba(70, 120, 200, 0.55) 25%,
+    rgba(70, 120, 200, 0.1) 45%,
+    rgba(70, 120, 200, 0) 60%
+  );
 }
 
 .game-panel:hover {
   flex: 1.12;
 }
 
-/* Remove old border divider (gap handles separation now) */
 
 /* Content sits above the overlay — fixed width prevents text reflow on hover */
 .panel-content {
@@ -155,14 +165,14 @@ body {
   z-index: 2;
   padding: 2rem 2.5rem;
   text-align: center;
-  width: min(85%, 440px);
+  width: min(100%, 45vw);
+  color: #fff;
 }
 
 .panel-name {
   font-family: 'Knockout', sans-serif;
   font-weight: 500; /* Knockout-71 */
-  font-size: clamp(2rem, 4vw, 4.5rem);
-  letter-spacing: 0.03em;
+  font-size: clamp(1.5rem, 4vw, 3rem);
   text-transform: uppercase;
   margin: 0 0 0.5rem 0;
   line-height: 1;
@@ -175,29 +185,14 @@ body {
   font-size: clamp(0.9rem, 1.8vw, 1.4rem);
   letter-spacing: 0.02em;
   margin: 0;
-  color: rgba(255, 255, 255, 0.88);
+  opacity: 0.9;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
 
   /* Clamp to 3 lines */
-  display: -webkit-box;
+  /*display: -webkit-box;
   -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  -webkit-box-orient: vertical;*/
   overflow: hidden;
-}
-
-/* Vote counter at the very bottom, centered, above both panels */
-.vote-counter {
-  position: fixed;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  font-size: 0.75rem;
-  font-weight: 300;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
-  pointer-events: none;
 }
 
 /* ── OR Badge in the center ──────────────────────────────────────── */
@@ -245,7 +240,8 @@ body {
 
   .app-header {
     position: relative;
-    background: rgba(0, 0, 0, 0.85);
+    background-color: transparent;
+    border-radius: 0;
     padding: 0;
   }
 
@@ -257,7 +253,7 @@ body {
   .matchup-container {
     flex-direction: column;
     height: auto;
-    gap: 8px;
+    gap: 0.5rem;
   }
 
   .game-panel {
@@ -278,6 +274,7 @@ body {
 
   .panel-content {
     padding: 1.25rem 1.5rem;
+    width: 100%;
   }
 
   .panel-name {
@@ -306,17 +303,23 @@ body {
 /* ── Leaderboard ─────────────────────────────────────────────────── */
 .leaderboard-wrapper {
   min-height: 100dvh;
-  padding: 4rem 2rem 2rem;
-  background: #111;
+  padding: 2rem 1rem 4rem 1rem;
+  background: rgb(248, 250, 252);
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .ldb-img {
+    width: 10rem;
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 .leaderboard-wrapper h2 {
   font-family: 'Knockout', sans-serif;
   font-weight: 900;
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   margin-bottom: 2rem;
@@ -331,16 +334,26 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  padding-bottom: 2rem;
+}
+
+.leaderboard-list p {
+  opacity: 0.6;
 }
 
 .leaderboard-item {
   display: flex;
   align-items: center;
-  background: #222;
+  background: #5F8CB4;
   padding: 0.85rem 1rem;
   border-radius: 8px;
   gap: 1rem;
   border: 1px solid rgba(255,255,255,0.07);
+  transition: transform 0.3s ease;
+}
+
+.leaderboard-item:hover {
+  transform: translateY(-2px) scale(1.05) rotate(1deg);
 }
 
 .rank {
@@ -348,7 +361,7 @@ body {
   font-weight: 900;
   font-size: 1.5rem;
   color: rgba(255,255,255,0.4);
-  width: 2.5rem;
+  width: 4rem;
   text-align: center;
 }
 
@@ -374,6 +387,8 @@ body {
   font-size: 1.15rem;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
 }
 
 .stats {
