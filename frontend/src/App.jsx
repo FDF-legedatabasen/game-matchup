@@ -36,14 +36,7 @@ function App() {
     <HashRouter>
       <div className="app-container">
         <Routes>
-          <Route path="/" element={
-            <>
-              <Voting games={games} setGames={setGames} />
-              <header className="app-header">
-                <h1>Hvilken leg vil du helst lege?</h1>
-              </header>
-            </>
-          } />
+          <Route path="/" element={<Voting games={games} setGames={setGames} />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>
       </div>

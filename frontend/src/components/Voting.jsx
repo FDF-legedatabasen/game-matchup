@@ -1,12 +1,37 @@
 import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
+import QRCode from 'react-qr-code';
 import { API_URL } from '../App';
 
 export default function Voting({ games, setGames }) {
   const [currentMatchup, setCurrentMatchup] = useState([]);
   const [seenMatchups, setSeenMatchups] = useState(new Set());
   const [votesCast, setVotesCast] = useState(0);
+  const [activeQR, setActiveQR] = useState({});
+  const [showSkip, setShowSkip] = useState(false);
   const sessionVoteCount = useRef(0);
+
+  useEffect(() => {
+    setShowSkip(false);
+    const timer = setTimeout(() => {
+      setShowSkip(true);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [currentMatchup]);
+
+  const toggleQR = (e, gameId, type, url) => {
+    e.stopPropagation();
+
+    if (window.innerWidth <= 768) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    setActiveQR(prev => ({
+      ...prev,
+      [gameId]: prev[gameId] === type ? null : type
+    }));
+  };
 
   // Initialize first matchup when games load
   useEffect(() => {
@@ -123,6 +148,32 @@ export default function Voting({ games, setGames }) {
               onClick={(e) => handleVote(game.id, otherGame.id, e)}
             >
               <div className="panel-content">
+                <div className="action-buttons">
+                  <button 
+                    className="action-button"
+                    onClick={(e) => toggleQR(e, game.id, 'slug', `https://legedatabasen.dk/leg/${game.slug}`)}
+                  >
+                    Se hele legen
+                  </button>
+                  {game.video && game.video !== 'null' && game.video !== '-' && game.video !== '' && (
+                    <button 
+                      className="action-button"
+                      onClick={(e) => toggleQR(e, game.id, 'video', `https://www.youtube.com/watch?v=${game.video}`)}
+                    >
+                      Se video
+                    </button>
+                  )}
+                </div>
+                {activeQR[game.id] === 'slug' && (
+                  <div className="qr-container" onClick={e => e.stopPropagation()}>
+                    <QRCode value={`https://legedatabasen.dk/leg/${game.slug}`} size={160} />
+                  </div>
+                )}
+                {activeQR[game.id] === 'video' && (
+                  <div className="qr-container" onClick={e => e.stopPropagation()}>
+                    <QRCode value={`https://www.youtube.com/watch?v=${game.video}`} size={160} />
+                  </div>
+                )}
                 <h2 className="panel-name">{game.name}</h2>
                 <p className="panel-teaser">{game.teaser}</p>
               </div>
@@ -133,6 +184,22 @@ export default function Voting({ games, setGames }) {
         {/* OR badge sits inside the relative container so it tracks the divider */}
         {/*<div className="or-badge">OR</div>*/}
       </div>
+      <header className="app-header">
+        <h1>Hvilken leg vil du helst lege?</h1>
+        <button 
+          className={`skip-button ${showSkip ? 'show' : ''}`}
+          onClick={() => {
+            if (showSkip) {
+              pickNextMatchup(games, seenMatchups);
+              setShowSkip(false);
+            }
+          }}
+          aria-hidden={!showSkip}
+          tabIndex={showSkip ? 0 : -1}
+        >
+          🤔 Det ved jeg ikke, giv' mig 2 nye lege 
+        </button>
+      </header>
     </>
   );
 }

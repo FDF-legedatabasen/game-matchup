@@ -29,7 +29,7 @@ export default function Leaderboard() {
           {leaders.map((game, index) => (
             <div key={game.id} className="leaderboard-item">
               <div className="rank">#{index + 1}</div>
-              <img src={game.image_path} alt={game.name} className="leaderboard-img" />
+              <img src={game.thumbnail_path} alt={game.name} className="leaderboard-img" />
               <div className="details">
                 <h3>{game.name}</h3>
                 <div className="stats">

@@ -52,7 +52,7 @@ export default {
       if (request.method === 'GET' && url.pathname === '/api/games') {
         const connection = await connectToDb(env);
         const [rows] = await connection.query(
-          'SELECT id, name, teaser, image_path, elo_rating, matches_played FROM games WHERE state = 1'
+          'SELECT id, name, teaser, image_path, elo_rating, matches_played, slug, video FROM games WHERE state = 1'
         );
         await connection.end();
 
@@ -69,7 +69,7 @@ export default {
       if (request.method === 'GET' && url.pathname === '/api/leaderboard') {
         const connection = await connectToDb(env);
         const [rows] = await connection.query(
-          'SELECT id, name, elo_rating, matches_played, image_path FROM games ORDER BY elo_rating DESC LIMIT 50'
+          'SELECT id, name, elo_rating, matches_played, thumbnail_path FROM games ORDER BY elo_rating DESC LIMIT 50'
         );
         await connection.end();
 

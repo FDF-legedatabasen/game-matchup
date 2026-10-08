@@ -1,25 +1,25 @@
 /* ── Knockout Fonts ──────────────────────────────────────────────── */
 @font-face {
   font-family: 'Knockout';
-  src: url('../../fonts/Knockout-31.woff2') format('woff2');
+  src: url('./fonts/Knockout-31.woff2') format('woff2');
   font-weight: 100; /* maps to Knockout-31 */
 }
 
 @font-face {
   font-family: 'Knockout';
-  src: url('../../fonts/Knockout-51.woff2') format('woff2');
+  src: url('./fonts/Knockout-51.woff2') format('woff2');
   font-weight: 300; /* maps to Knockout-51 */
 }
 
 @font-face {
   font-family: 'Knockout';
-  src: url('../../fonts/Knockout-71.woff2') format('woff2');
+  src: url('./fonts/Knockout-71.woff2') format('woff2');
   font-weight: 500; /* maps to Knockout-71 */
 }
 
 @font-face {
   font-family: 'Knockout';
-  src: url('../../fonts/Knockout-94.woff2') format('woff2');
+  src: url('./fonts/Knockout-94.woff2') format('woff2');
   font-weight: 900; /* maps to Knockout-94 */
 }
 
@@ -91,6 +91,46 @@ body {
   margin: 0;
   padding: 0.6rem 2rem;
   text-align: center;
+}
+
+.skip-button {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  z-index: 25;
+  padding: 0.6rem 1.5rem;
+  border-radius: 2rem;
+  border: none;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  cursor: pointer;
+  font-family: 'Knockout', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  text-transform: uppercase;
+  text-align: center;
+  width: max-content;
+  max-width: 90vw;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  
+  /* Animation setup */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.3s, background 0.2s;
+}
+
+.skip-button.show {
+  opacity: .9;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) scale(1);
+}
+
+.skip-button.show:hover {
+  transform: translateX(-50%) scale(1.05);
+  background: rgba(0, 0, 0, 1);
 }
 
 /* ── Voting Split Layout ─────────────────────────────────────────── */
@@ -195,6 +235,43 @@ body {
   overflow: hidden;
 }
 
+/* ── Action Buttons & QR ─────────────────────────────────────────── */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
+  cursor: pointer;
+  font-family: 'Knockout', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.action-button:hover {
+  transform: scale(1.05);
+}
+
+.qr-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
 /* ── OR Badge in the center ──────────────────────────────────────── */
 /* Anchored inside .matchup-container (which is position:relative)   */
 /* On desktop: sits at the center of the vertical divider gap        */
@@ -236,18 +313,27 @@ body {
   .app-container {
     height: auto;
     min-height: 100dvh;
+    position: relative;
   }
 
   .app-header {
-    position: relative;
+    position: unset;
     background-color: transparent;
     border-radius: 0;
-    padding: 0;
+    padding: 1rem 0;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    transform: none;
   }
 
   .app-header h1 {
     font-size: clamp(1.6rem, 8vw, 2.5rem);
     padding: 0.75rem 1rem;
+  }
+
+  .skip-button {
+    top: 1rem;
   }
 
   .matchup-container {
@@ -257,7 +343,7 @@ body {
   }
 
   .game-panel {
-    height: 50dvh;
+    height: calc(50dvh - 0.25rem);
     flex: none;
     /* Top panel: bottom corners face the gap */
     border-radius: 0 0 14px 14px;
