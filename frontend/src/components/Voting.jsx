@@ -5,7 +5,26 @@ import { API_URL } from '../App';
 
 export default function Voting({ games, setGames }) {
   const [currentMatchup, setCurrentMatchup] = useState([]);
-  const [seenMatchups, setSeenMatchups] = useState(new Set());
+  const [seenMatchups, setSeenMatchups] = useState(() => {
+    try {
+      const savedSeen = localStorage.getItem('seenMatchups');
+      return savedSeen ? new Set(JSON.parse(savedSeen)) : new Set();
+    } catch (e) {
+      return new Set();
+    }
+  });
+
+  // Sync seenMatchups to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('seenMatchups', JSON.stringify(Array.from(seenMatchups)));
+  }, [seenMatchups]);
+
+  // Sync currentMatchup to localStorage whenever it changes
+  useEffect(() => {
+    if (currentMatchup.length === 2) {
+      localStorage.setItem('currentMatchupIds', JSON.stringify([currentMatchup[0].id, currentMatchup[1].id]));
+    }
+  }, [currentMatchup]);
   const [votesCast, setVotesCast] = useState(0);
   const [activeQR, setActiveQR] = useState({});
   const [showSkip, setShowSkip] = useState(false);
@@ -36,6 +55,21 @@ export default function Voting({ games, setGames }) {
   // Initialize first matchup when games load
   useEffect(() => {
     if (games.length >= 2 && currentMatchup.length === 0) {
+      try {
+        const savedMatchupIds = JSON.parse(localStorage.getItem('currentMatchupIds'));
+        if (savedMatchupIds && savedMatchupIds.length === 2) {
+          const game1 = games.find(g => g.id === savedMatchupIds[0]);
+          const game2 = games.find(g => g.id === savedMatchupIds[1]);
+          if (game1 && game2) {
+            setCurrentMatchup([game1, game2]);
+            return;
+          }
+        }
+      } catch (e) {
+        console.error('Error loading matchup from localStorage', e);
+      }
+      
+      // Fallback if no saved matchup or if the saved games don't exist
       pickNextMatchup(games, seenMatchups);
     }
   }, [games]);
